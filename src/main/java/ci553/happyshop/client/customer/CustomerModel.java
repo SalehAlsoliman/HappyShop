@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static java.util.Collections.*;
 
 /**
  * TODO
@@ -70,14 +70,28 @@ public class CustomerModel {
             //TODO
             // 1. Merges items with the same product ID (combining their quantities).
             // 2. Sorts the products in the trolley by product ID.
-            trolley.add(theProduct);
-            displayTaTrolley = ProductListFormatter.buildString(trolley); //build a String for trolley so that we can show it
+            //trolley.add(theProduct);
+            makeOrganizedTrolley();
+            displayTaTrolley = ProductListFormatter.buildString(getTrolley()); //build a String for trolley so that we can show it
         }
         else{
             displayLaSearchResult = "Please search for an available product before adding it to the trolley";
             System.out.println("must search and get an available product before add to trolley");
         }
         displayTaReceipt=""; // Clear receipt to switch back to trolleyPage (receipt shows only when not empty)
+        updateView();
+    }
+
+    void makeOrganizedTrolley(){
+        for(Product p: trolley){
+            if(p.getProductId().equals(theProduct.getProductId())){
+                p.setOrderedQuantity(p.getOrderedQuantity() + theProduct.getOrderedQuantity());
+                updateView();
+                return;
+            }
+        }
+        Product pNew= new Product(theProduct.getProductId(), theProduct.getProductDescription(), theProduct.getProductImageName(), theProduct.getUnitPrice(), theProduct.getStockQuantity());
+        trolley.add(pNew);
         updateView();
     }
 
@@ -181,6 +195,10 @@ public class CustomerModel {
 
     //for test only
     public ArrayList<Product> getTrolley() {
+        sort(trolley, (p1, p2) -> p1.getProductId().compareTo(p2.getProductId()));
         return trolley;
+    }
+    public void setTheProduct(Product theProduct) {
+        this.theProduct = theProduct;
     }
 }
