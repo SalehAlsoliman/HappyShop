@@ -102,10 +102,22 @@ public class RemoveProductNotifier {
 
         //get bounds of betterCustomer window which trigers the ProductRemovalNotifier
         // so that we can put the ProductRemovalNotifier at a suitable position
-        WindowBounds bounds = cusView.getWindowBounds();
-        window.setX(bounds.x + bounds.width -WIDTH -10); // Position to the right of warehouse window
-        window.setY(bounds.y + bounds.height / 2 + 40);
+        if (cusView != null) {
+            try {
+                WindowBounds bounds = cusView.getWindowBounds();
+                window.setX(bounds.x + bounds.width - WIDTH - 10); // Position to the right of warehouse window
+                window.setY(bounds.y + bounds.height / 2 + 40);
+            } catch (Exception e) {
+                window.centerOnScreen();
+            }
+        }
+        else {
+            window.centerOnScreen();
+        }
         window.show();
+    }
+    public RemoveProductNotifier(CustomerView cusView) {
+        this.cusView = cusView;
     }
 
     // Show remove product message

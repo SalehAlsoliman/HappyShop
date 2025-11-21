@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CustomerModelTest {
+// Organized Trolley
 
     @Test
     void makeOrganizedTrolley() {
@@ -39,5 +40,25 @@ class CustomerModelTest {
         assertEquals(2, tro.size());
         assertEquals("0001", tro.get(0).getProductId());
         assertEquals("0004", tro.get(1).getProductId());
+    }
+
+
+    // Stock shortage
+    @Test
+    void testStockShortageAtCheckout() {
+        CustomerModel cm = new CustomerModel();
+        Product p = new Product("0003", "Toaster", "0003.jpg", 19.99, 1);
+        cm.setTheProduct(p);
+
+        p.setOrderedQuantity(2);
+        p.setOrderedQuantity(2);
+
+        try {
+            cm.checkOut();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ArrayList<Product> trolley = cm.getTrolley();
+        assertEquals(0, trolley.size(), "Trolley should be empty");
     }
 }

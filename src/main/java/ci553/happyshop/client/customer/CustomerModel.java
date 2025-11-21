@@ -120,24 +120,28 @@ public class CustomerModel {
                 System.out.println(displayTaReceipt);
             }
             else{ // Some products have insufficient stock — build an error message to inform the customer
-                StringBuilder errorMsg = new StringBuilder();
-                for(Product p : insufficientProducts){
-                    errorMsg.append("\u2022 "+ p.getProductId()).append(", ")
-                            .append(p.getProductDescription()).append(" (Only ")
-                            .append(p.getStockQuantity()).append(" available, ")
-                            .append(p.getOrderedQuantity()).append(" requested)\n");
-                }
-                theProduct=null;
+                // remove not avaliable items from trolley
+                trolley.removeAll(insufficientProducts);
+                // pop up window
+                StringBuilder msg = new StringBuilder();
+                msg.append("These items were removed because there wasnt enough stock:\n\n");
 
-                //TODO
-                // Add the following logic here:
-                // 1. Remove products with insufficient stock from the trolley.
-                // 2. Trigger a message window to notify the customer about the insufficient stock, rather than directly changing displayLaSearchResult.
-                //You can use the provided RemoveProductNotifier class and its showRemovalMsg method for this purpose.
-                //remember close the message window where appropriate (using method closeNotifierWindow() of RemoveProductNotifier class)
-                displayLaSearchResult = "Checkout failed due to insufficient stock for the following products:\n" + errorMsg.toString();
-                System.out.println("stock is not enough");
-            }
+                for(Product p: insufficientProducts){
+                    msg.append(", ").append(p.getProductDescription())
+                            .append(" (ID:").append(p.getProductId()).append(")\n");
+                }
+                //Trigger pop up
+                RemoveProductNotifier notifier = new RemoveProductNotifier(cusView);
+                notifier.showRemovalMsg(msg.toString());
+
+                // reset selection
+                theProduct = null;
+                // update main screen text
+                displayLaSearchResult = "Checkout error";
+                System.out.println("There wasnt enough stock");
+
+
+                }
         }
         else{
             displayTaTrolley = "Your trolley is empty";
@@ -158,9 +162,9 @@ public class CustomerModel {
                 Product existing = grouped.get(id);
                 existing.setOrderedQuantity(existing.getOrderedQuantity() + p.getOrderedQuantity());
             } else {
-                // Make a shallow copy to avoid modifying the original
-                grouped.put(id,new Product(p.getProductId(),p.getProductDescription(),
-                        p.getProductImageName(),p.getUnitPrice(),p.getStockQuantity()));
+                Product newProduct = new Product(p.getProductId(), p.getProductDescription(), p.getProductImageName(), p.getUnitPrice(), p.getStockQuantity());
+                newProduct.setOrderedQuantity(p.getOrderedQuantity());
+                grouped.put(id, newProduct);
             }
         }
         return new ArrayList<>(grouped.values());
@@ -176,18 +180,19 @@ public class CustomerModel {
     }
 
     void updateView() {
-        if(theProduct != null){
+        if (theProduct != null) {
             imageName = theProduct.getProductImageName();
-            String relativeImageUrl = StorageLocation.imageFolder +imageName; //relative file path, eg images/0001.jpg
+            String relativeImageUrl = StorageLocation.imageFolder + imageName; //relative file path, eg images/0001.jpg
             // Get the full absolute path to the image
             Path imageFullPath = Paths.get(relativeImageUrl).toAbsolutePath();
             imageName = imageFullPath.toUri().toString(); //get the image full Uri then convert to String
             System.out.println("Image absolute path: " + imageFullPath); // Debugging to ensure path is correct
-        }
-        else{
+        } else {
             imageName = "imageHolder.jpg";
         }
-        cusView.update(imageName, displayLaSearchResult, displayTaTrolley,displayTaReceipt);
+        if (cusView != null) {
+            cusView.update(imageName, displayLaSearchResult, displayTaTrolley, displayTaReceipt);
+        }
     }
      // extra notes:
      //Path.toUri(): Converts a Path object (a file or a directory path) to a URI object.
