@@ -61,4 +61,16 @@ class CustomerModelTest {
         ArrayList<Product> trolley = cm.getTrolley();
         assertEquals(0, trolley.size(), "Trolley should be empty");
     }
+
+//sound click
+
+    @Test
+    void testsound() {
+        CustomerModel cm = new CustomerModel();
+        Product p = new Product("0001", "40 inch TV", "0001.jpg", 269.00, 10);
+        cm.setTheProduct(p);
+        cm.addToTrolley();
+        ArrayList<Product> trolley = cm.getTrolley();
+        assertEquals(1, trolley.size(), "Trolley should contain 1 item after addition");
+    }
 }
