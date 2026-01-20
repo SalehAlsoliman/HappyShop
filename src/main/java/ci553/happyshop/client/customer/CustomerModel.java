@@ -27,7 +27,7 @@ public class CustomerModel {
 
     private Product theProduct =null; // product found from search
     private ArrayList<Product> trolley =  new ArrayList<>(); // a list of products in trolley
-
+    private ArrayList<Product> allProducts =  new ArrayList<>();
     // Four UI elements to be passed to CustomerView for display updates.
     private String imageName = "imageHolder.jpg";                // Image to show in product preview (Search Page)
     private String displayLaSearchResult = "No Product was searched yet"; // Label showing search result message (Search Page)
@@ -35,8 +35,7 @@ public class CustomerModel {
     private String displayTaReceipt = "";                                // Text area content showing receipt after checkout (Receipt Page)
 
     //SELECT productID, description, image, unitPrice,inStock quantity
-    void search() throws SQLException {
-        String productId = cusView.tfId.getText().trim();
+    void search(String productId) throws SQLException {
         if(!productId.isEmpty()){
             theProduct = databaseRW.searchByProductId(productId); //search database
             if(theProduct != null && theProduct.getStockQuantity()>0){
@@ -205,5 +204,32 @@ public class CustomerModel {
     }
     public void setTheProduct(Product theProduct) {
         this.theProduct = theProduct;
+    }
+
+    public void searchByName(String name) {
+        //If the list is empty then load it with the data (Siming a database)
+        if (allProducts.isEmpty()) {
+            //add the the products to demostrate
+            allProducts.add(new Product("0001", "40 inch TV", "0001.jpg", 150.00, 10));
+            allProducts.add(new Product("0002", "Toaster", "0002.jpg", 20.00, 50));
+            allProducts.add(new Product("0003", "Kettle", "0003.jpg", 15.00, 20));
+        }
+        //clear the previous result
+        this.theProduct = null;
+        displayLaSearchResult = "Product not found";
+        //the Search Logic
+        for (Product p : allProducts) {
+            if (p.getProductDescription().toLowerCase().contains(name.toLowerCase())) {
+                this.theProduct = p;
+                //Build the string to show the user
+                displayLaSearchResult = "Found: " + p.getProductDescription() + "\nPrice: £" + p.getUnitPrice();
+                updateView(); //this shows it on the screen
+                return;
+            }
+        }
+        updateView();
+    }
+    public Product getSelectedProduct() {
+        return this.theProduct;
     }
 }

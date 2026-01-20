@@ -51,6 +51,7 @@ public class CustomerView  {
     private Stage viewWindow;
 
     public void start(Stage window) {
+        cusController.cusView = this;
         VBox vbSearchPage = createSearchPage();
         vbTrolleyPage = CreateTrolleyPage();
         vbReceiptPage = createReceiptPage();
@@ -214,5 +215,12 @@ public class CustomerView  {
     WindowBounds getWindowBounds() {
         return new WindowBounds(viewWindow.getX(), viewWindow.getY(),
                   viewWindow.getWidth(), viewWindow.getHeight());
+    }
+    public String getIdInput() {
+        return tfId.getText().trim(); // Changed idTextField to tfId
+    }
+
+    public String getNameInput() {
+        return tfName.getText().trim(); // Changed nameTextField to tfDescription
     }
 }

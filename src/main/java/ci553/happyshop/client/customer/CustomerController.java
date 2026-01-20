@@ -7,11 +7,21 @@ import java.io.File;
 
 public class CustomerController {
     public CustomerModel cusModel;
+    public CustomerView cusView;
 
     public void doAction(String action) throws SQLException, IOException {
         switch (action) {
             case "Search":
-                cusModel.search();
+                // Use cusView (not view) to match your class variable
+                String idInput = cusView.getIdInput();
+                String nameInput = cusView.getNameInput();
+
+                if (!idInput.isEmpty()) {
+                    cusModel.search(idInput);
+                } else if (!nameInput.isEmpty()) {
+                    cusModel.searchByName(nameInput);
+                }
+                playFeedbackSound();
                 break;
             case "Add to Trolley":
                 cusModel.addToTrolley();

@@ -2,6 +2,7 @@ package ci553.happyshop.client.customer;
 
 import ci553.happyshop.catalogue.Product;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 
@@ -73,4 +74,21 @@ class CustomerModelTest {
         ArrayList<Product> trolley = cm.getTrolley();
         assertEquals(1, trolley.size(), "Trolley should contain 1 item after addition");
     }
-}
+
+    @Test
+    void testSearchByName() {
+        // 1. Setup
+        CustomerModel model = new CustomerModel();
+        //Search for TV
+        //this triggers the new logic which loads the dummy data and finds the tv
+        model.searchByName("TV");
+        //Verification
+        Product selected = model.getSelectedProduct(); // Make sure you have a getter for 'theProduct'
+        //did it find a product?
+        assertNotNull(selected, "The product should not be null after a successful search");
+        //is it the Right product?
+        assertTrue(selected.getProductDescription().contains("TV"), "it should be 'TV'");
+        //is the price correct?
+        assertEquals(150.00, selected.getUnitPrice(), "The price should be 150.00");
+        }
+    }
